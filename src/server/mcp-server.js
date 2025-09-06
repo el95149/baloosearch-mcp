@@ -1,7 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod"
-import { searchFiles } from "../tools/baloosearch-tool.js"
+import { searchFiles, showFileWords } from "../tools/baloosearch-tool.js"
 
 const server = new McpServer({
   name: "Baloosearch MCP Server",
@@ -48,6 +48,29 @@ Query Syntax Examples:
     } catch (error) {
       return {
         content: [{ type: "text", text: `Error searching files: ${error.message}` }]
+      }
+    }
+  }
+)
+
+// Tool to show indexed words in a file using balooshow
+server.tool(
+  "show_file_words",
+  `Show indexed content & meta-data in a file using KDE balooshow.
+  
+This tool retrieves all the indexed words & meta-data from a specific file that has been indexed by KDE's Baloo search system.`,
+  {
+    path: z.string().describe("The absolute path to the file to show indexed words & meta-data for")
+  },
+  async ({ path }) => {
+    try {
+      const results = await showFileWords({ path })
+      return {
+        content: [{ type: "text", text: JSON.stringify(results, null, 2) }]
+      }
+    } catch (error) {
+      return {
+        content: [{ type: "text", text: `Error showing file words: ${error.message}` }]
       }
     }
   }

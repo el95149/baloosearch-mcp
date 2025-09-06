@@ -69,3 +69,37 @@ export async function searchFiles({ query, limit = 10, offset = 0, directory, ty
     throw new Error(`Failed to execute baloosearch: ${error.message}`)
   }
 }
+
+/**
+ * Show indexed words in a file using KDE balooshow
+ * @param {Object} options - Show options
+ * @param {string} options.path - The absolute path to the file
+ * @returns {Promise<Array>} - Array of indexed words from the file
+ */
+export async function showFileWords({ path }) {
+  // Validate inputs
+  if (!path || typeof path !== 'string') {
+    throw new Error('Path is required and must be a string')
+  }
+
+  // Build the balooshow command
+  let command = `balooshow -x "${path}"`
+
+  try {
+    // Execute the command
+    const { stdout, stderr } = await execPromise(command)
+
+    // Parse the output
+    const lines = stdout.trim().split('\n').filter(line => line.length > 0)
+
+    // Filter out any empty lines or error messages
+    const words = lines.filter(line => !line.startsWith('Elapsed:') && line.trim() !== '')
+
+    return {
+      path: path,
+      words: words
+    }
+  } catch (error) {
+    throw new Error(`Failed to execute balooshow: ${error.message}`)
+  }
+}
