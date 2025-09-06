@@ -19,25 +19,74 @@ Query Syntax Examples:
 - OR search: "report OR presentation" (finds files with either term)
 - Phrase search: "\\"strategic plan\\"" (finds exact phrase)
 - Exclusion: "financial -tax" (finds files with "financial" but not "tax")
-- Wildcard: "report*" (finds files with words starting with "report")`,
+- Wildcard: "report*" (finds files with words starting with "report")
+- Property search: "Artist:\\"Coldplay\\"" (finds audio files by artist)
+- File type search: "type:Audio" (finds audio files)
+- Combined expressions: "(type:Audio AND Artist:\\"Coldplay\\") OR (type:Document AND subject:\\"music\\")"`,
   {
     query: z.string().describe(`The search query terms. Supports advanced search syntax:
-- AND: Requires both terms (e.g., "budget AND marketing")
-- OR: Requires either term (e.g., "report OR presentation")
-- NOT or -: Excludes terms (e.g., "financial -tax" or "financial NOT tax")
-- Phrase search: Use quotes for exact phrases (e.g., "\\"project plan\\"")
-- Wildcards: Use * for partial matching (e.g., "report*")
-- Grouping: Use parentheses to group terms (e.g., "(budget OR finance) AND 2024")`),
+- Basic search: Simple terms like "project plan"
+- AND queries: "budget AND marketing" (requires both terms)
+- OR queries: "report OR presentation" (requires either term)
+- NOT queries: "financial -tax" or "financial NOT tax" (excludes terms)
+- Phrase searches: "\\"exact phrase\\"" (matches exact phrases)
+- Wildcards: "report*" (matches partial words)
+- Property searches: "Artist:\\"Coldplay\\"" or "Author:\\"Smith\\""
+- File type filters: "type:Audio", "type:Document", "type:Image", etc.
+- Grouping: Use parentheses "(term1 AND term2) OR term3"
+- Property comparisons: "rating>3", "modified>2024-01-01"
+
+Supported file types:
+- "Archive" (zip, tar, etc.)
+- "Folder" (directories)
+- "Audio" (mp3, wav, etc.)
+- "Video" (mp4, avi, etc.)
+- "Image" (jpg, png, etc.)
+- "Document" (pdf, doc, etc.)
+  - "Spreadsheet" (xls, xlsx, etc.)
+  - "Presentation" (ppt, pptx, etc.)
+- "Text" (txt, etc.)
+
+Common properties for all files:
+- filename (name of the file)
+- modified (last modification date)
+- mimetype (MIME type of file)
+- tags (user-defined tags)
+- rating (numeric rating 0-10)
+- userComment (user comments)
+
+Audio-specific properties:
+- Artist, Album, AlbumArtist, Composer, Lyricist
+- Genre, Duration, BitRate, Channels, SampleRate
+- TrackNumber, ReleaseYear, Comment
+
+Document-specific properties:
+- Author, Title, Subject, Keywords
+- PageCount, WordCount, LineCount
+- Language, Copyright, Publisher
+- CreationDate, Generator
+
+Media-specific properties (Video/Images):
+- Width, Height, AspectRatio, FrameRate
+
+Image-specific properties:
+- ImageMake, ImageModel, ImageDateTime
+- PhotoFlash, PhotoFNumber, PhotoISOSpeedRatings
+- PhotoGpsLatitude, PhotoGpsLongitude, PhotoGpsAltitude`),
     limit: z.number().optional().describe("Maximum number of results to return (default: 10)"),
     offset: z.number().optional().describe("Offset from which to start the search (default: 0)"),
     directory: z.string().optional().describe("Limit search to specified directory (absolute path)"),
     type: z.string().optional().describe(`Type of data to be searched. Common types include:
-- "Document" (text documents, PDFs, etc.)
-- "Audio" (audio files)
-- "Image" (image files)
-- "Video" (video files)
+- "Archive" (zip, tar, etc.)
 - "Folder" (directories)
-- "Unknown" (files with unknown type)`)
+- "Audio" (mp3, wav, etc.)
+- "Video" (mp4, avi, etc.)
+- "Image" (jpg, png, etc.)
+- "Document" (pdf, doc, etc.)
+  - "Spreadsheet" (xls, xlsx, etc.)
+  - "Presentation" (ppt, pptx, etc.)
+- "Text" (txt, etc.)
+Note: This parameter is an alternative to using "type:" in the query.`)
   },
   async ({ query, limit, offset, directory, type }) => {
     try {

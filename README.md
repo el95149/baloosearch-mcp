@@ -13,6 +13,8 @@ The server implements the Model Context Protocol specification and can be used w
 - Search for terms in files using KDE baloosearch
 - Configurable search parameters (limit, offset, directory, file type)
 - Advanced query syntax support (AND, OR, NOT, phrases, wildcards)
+- Property-based searches (Artist, Author, etc.)
+- File type filtering (Audio, Document, Image, etc.)
 - JSON output of search results
 - Full MCP compliance for integration with AI assistants
 
@@ -58,7 +60,48 @@ Search for terms in files using KDE baloosearch.
 - Phrase search: `"\"strategic plan\""` (finds exact phrase)
 - Exclusion: `"financial -tax"` (finds files with "financial" but not "tax")
 - Wildcard: `"report*"` (finds files with words starting with "report")
-- Grouping: `"(budget OR finance) AND 2024"` (complex queries with parentheses)
+- Property search: `"Artist:\"Coldplay\""` (finds audio files by artist)
+- File type search: `"type:Audio"` (finds audio files)
+- Combined expressions: `"(type:Audio AND Artist:\"Coldplay\") OR (type:Document AND subject:\"music\")"`
+- Property comparisons: `"rating>3"`, `"modified>2024-01-01"`
+
+**Supported File Types:**
+- `"Archive"` (zip, tar, etc.)
+- `"Folder"` (directories)
+- `"Audio"` (mp3, wav, etc.)
+- `"Video"` (mp4, avi, etc.)
+- `"Image"` (jpg, png, etc.)
+- `"Document"` (pdf, doc, etc.)
+  - `"Spreadsheet"` (xls, xlsx, etc.)
+  - `"Presentation"` (ppt, pptx, etc.)
+- `"Text"` (txt, etc.)
+
+**Common Properties for All Files:**
+- `filename` (name of the file)
+- `modified` (last modification date)
+- `mimetype` (MIME type of file)
+- `tags` (user-defined tags)
+- `rating` (numeric rating 0-10)
+- `userComment` (user comments)
+
+**Audio-Specific Properties:**
+- `Artist`, `Album`, `AlbumArtist`, `Composer`, `Lyricist`
+- `Genre`, `Duration`, `BitRate`, `Channels`, `SampleRate`
+- `TrackNumber`, `ReleaseYear`, `Comment`
+
+**Document-Specific Properties:**
+- `Author`, `Title`, `Subject`, `Keywords`
+- `PageCount`, `WordCount`, `LineCount`
+- `Language`, `Copyright`, `Publisher`
+- `CreationDate`, `Generator`
+
+**Media-Specific Properties (Video/Images):**
+- `Width`, `Height`, `AspectRatio`, `FrameRate`
+
+**Image-Specific Properties:**
+- `ImageMake`, `ImageModel`, `ImageDateTime`
+- `PhotoFlash`, `PhotoFNumber`, `PhotoISOSpeedRatings`
+- `PhotoGpsLatitude`, `PhotoGpsLongitude`, `PhotoGpsAltitude`
 
 **Parameters:**
 - `query` (string, required): The search query terms. Supports advanced search syntax:
@@ -67,17 +110,24 @@ Search for terms in files using KDE baloosearch.
   - `NOT` or `-`: Excludes terms (e.g., `"financial -tax"` or `"financial NOT tax"`)
   - Phrase search: Use quotes for exact phrases (e.g., `"\"project plan\""`)
   - Wildcards: Use `*` for partial matching (e.g., `"report*"`)
+  - Property searches: `"Artist:\"Coldplay\""` or `"Author:\"Smith\""`
+  - File type filters: `"type:Audio"`, `"type:Document"`, `"type:Image"`, etc.
+  - Property comparisons: `"rating>3"`, `"modified>2024-01-01"`
   - Grouping: Use parentheses to group terms (e.g., `"(budget OR finance) AND 2024"`)
 - `limit` (number, optional): Maximum number of results to return (default: 10)
 - `offset` (number, optional): Offset from which to start the search (default: 0)
 - `directory` (string, optional): Limit search to specified directory (absolute path)
 - `type` (string, optional): Type of data to be searched. Common types include:
-  - `"Document"` (text documents, PDFs, etc.)
-  - `"Audio"` (audio files)
-  - `"Image"` (image files)
-  - `"Video"` (video files)
+  - `"Archive"` (zip, tar, etc.)
   - `"Folder"` (directories)
-  - `"Unknown"` (files with unknown type)
+  - `"Audio"` (mp3, wav, etc.)
+  - `"Video"` (mp4, avi, etc.)
+  - `"Image"` (jpg, png, etc.)
+  - `"Document"` (pdf, doc, etc.)
+    - `"Spreadsheet"` (xls, xlsx, etc.)
+    - `"Presentation"` (ppt, pptx, etc.)
+  - `"Text"` (txt, etc.)
+  Note: This parameter is an alternative to using "type:" in the query.
 
 **Returns:**
 - JSON array of objects containing file paths that match the search criteria
@@ -101,11 +151,17 @@ echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"search_fil
 # Search for files with both "budget" and "marketing"
 echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"search_files","arguments":{"query":"budget AND marketing","limit":5}}}' | node src/server/mcp-server.js
 
-# Search for files with either "report" or "presentation"
-echo '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"search_files","arguments":{"query":"report OR presentation","limit":5}}}' | node src/server/mcp-server.js
+# Search for audio files by a specific artist
+echo '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"search_files","arguments":{"query":"type:Audio AND Artist:\"ArtistName\"","limit":5}}}' | node src/server/mcp-server.js
 
-# Search for files with "financial" but not "tax"
-echo '{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"search_files","arguments":{"query":"financial -tax","limit":5}}}' | node src/server/mcp-server.js
+# Search for documents with high ratings
+echo '{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"search_files","arguments":{"query":"type:Document AND rating>3","limit":5}}}' | node src/server/mcp-server.js
+
+# Search for recent documents
+echo '{"jsonrpc":"2.0","id":6,"method":"tools/call","params":{"name":"search_files","arguments":{"query":"type:Document AND modified>2024-01-01","limit":5}}}' | node src/server/mcp-server.js
+
+# Search for images with specific properties
+echo '{"jsonrpc":"2.0","id":7,"method":"tools/call","params":{"name":"search_files","arguments":{"query":"type:Image AND PhotoFNumber<2.8","limit":5}}}' | node src/server/mcp-server.js
 ```
 
 ## Integration with Claude Desktop
