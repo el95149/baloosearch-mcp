@@ -2,7 +2,7 @@
   "mcpServers": {
     "baloosearch": {
       "command": "node",
-      "args": ["/home/aanagnostopoulos/ownCloud/Documents/AI/baloo-mcp/baloosearch-mcp/src/server/mcp-server.js"]
+      "args": ["<path to repo>/src/server/mcp-server.js"]
     }
   }
 }
