@@ -2,7 +2,10 @@
   "name": "baloosearch-mcp",
   "version": "1.0.0",
   "type": "module",
-  "description": "A Model Context Protocol (MCP) server that provides file search functionality using KDE's baloosearch tool.",
+  "description": "A Model Context Protocol (MCP) server that provides file search functionality using KDE's baloosearch tool. Allows AI assistants to search your files using natural language queries.",
+  "bin": {
+    "baloosearch-mcp": "src/server/mcp-server.js"
+  },
   "main": "src/server/mcp-server.js",
   "directories": {
     "test": "test"
@@ -14,11 +17,28 @@
     "test-server": "node src/test-server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "kde",
+    "baloo",
+    "baloosearch",
+    "file-search",
+    "semantic-search",
+    "ai",
+    "claude"
+  ],
+  "author": "Your Name <your.email@example.com>",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/baloosearch-mcp.git"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.5",
     "zod": "^3.25.76"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

@@ -29,6 +29,16 @@ The server implements the Model Context Protocol specification and can be used w
 npm install
 ```
 
+## Running with npx
+
+You can run this MCP server directly using npx without installing it globally:
+
+```bash
+npx baloosearch-mcp
+```
+
+This will start the MCP server that can be used with any MCP-compatible AI assistant.
+
 ## Usage
 
 ### Starting the Server
@@ -212,6 +222,25 @@ npm run test-tool
 
 # Test the MCP server startup
 npm run test-server
+```
+
+### Publishing to npm
+
+To publish this package to npm:
+
+1. Create an account at [npmjs.com](https://www.npmjs.com/signup) if you don't have one
+2. Log in to npm:
+   ```bash
+   npm login
+   ```
+3. Publish the package:
+   ```bash
+   npm publish
+   ```
+
+After publishing, users will be able to run your MCP server using:
+```bash
+npx baloosearch-mcp
 ```
 
 ### Modifying the Server
