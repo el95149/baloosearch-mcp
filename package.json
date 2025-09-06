@@ -1,0 +1,23 @@
+{
+  "name": "baloosearch-mcp",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A Model Context Protocol (MCP) server that provides file search functionality using KDE's baloosearch tool.",
+  "main": "src/server/mcp-server.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "start": "node src/server/mcp-server.js",
+    "test-tool": "node src/test-tool.js",
+    "test-server": "node src/test-server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.5",
+    "zod": "^3.25.76"
+  }
+}
