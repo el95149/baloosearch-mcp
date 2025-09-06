@@ -12,6 +12,7 @@ The server implements the Model Context Protocol specification and can be used w
 
 - Search for terms in files using KDE baloosearch
 - Configurable search parameters (limit, offset, directory, file type)
+- Advanced query syntax support (AND, OR, NOT, phrases, wildcards)
 - JSON output of search results
 - Full MCP compliance for integration with AI assistants
 
@@ -50,12 +51,33 @@ This runs a direct test of the baloosearch functionality.
 
 Search for terms in files using KDE baloosearch.
 
+**Query Syntax Examples:**
+- Simple search: `"project plan"`
+- Multiple terms: `"budget AND marketing"` (finds files with both terms)
+- OR search: `"report OR presentation"` (finds files with either term)
+- Phrase search: `"\"strategic plan\""` (finds exact phrase)
+- Exclusion: `"financial -tax"` (finds files with "financial" but not "tax")
+- Wildcard: `"report*"` (finds files with words starting with "report")
+- Grouping: `"(budget OR finance) AND 2024"` (complex queries with parentheses)
+
 **Parameters:**
-- `query` (string, required): The search query terms
+- `query` (string, required): The search query terms. Supports advanced search syntax:
+  - `AND`: Requires both terms (e.g., `"budget AND marketing"`)
+  - `OR`: Requires either term (e.g., `"report OR presentation"`)
+  - `NOT` or `-`: Excludes terms (e.g., `"financial -tax"` or `"financial NOT tax"`)
+  - Phrase search: Use quotes for exact phrases (e.g., `"\"project plan\""`)
+  - Wildcards: Use `*` for partial matching (e.g., `"report*"`)
+  - Grouping: Use parentheses to group terms (e.g., `"(budget OR finance) AND 2024"`)
 - `limit` (number, optional): Maximum number of results to return (default: 10)
 - `offset` (number, optional): Offset from which to start the search (default: 0)
-- `directory` (string, optional): Limit search to specified directory
-- `type` (string, optional): Type of data to be searched (e.g., "Document", "Audio", "Image")
+- `directory` (string, optional): Limit search to specified directory (absolute path)
+- `type` (string, optional): Type of data to be searched. Common types include:
+  - `"Document"` (text documents, PDFs, etc.)
+  - `"Audio"` (audio files)
+  - `"Image"` (image files)
+  - `"Video"` (video files)
+  - `"Folder"` (directories)
+  - `"Unknown"` (files with unknown type)
 
 **Returns:**
 - JSON array of objects containing file paths that match the search criteria
@@ -72,6 +94,18 @@ echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | node src/server/mcp-serv
 ### Search for Files
 ```bash
 echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"search_files","arguments":{"query":"test","limit":3}}}' | node src/server/mcp-server.js
+```
+
+### Advanced Search Examples
+```bash
+# Search for files with both "budget" and "marketing"
+echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"search_files","arguments":{"query":"budget AND marketing","limit":5}}}' | node src/server/mcp-server.js
+
+# Search for files with either "report" or "presentation"
+echo '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"search_files","arguments":{"query":"report OR presentation","limit":5}}}' | node src/server/mcp-server.js
+
+# Search for files with "financial" but not "tax"
+echo '{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"search_files","arguments":{"query":"financial -tax","limit":5}}}' | node src/server/mcp-server.js
 ```
 
 ## Integration with Claude Desktop

@@ -11,13 +11,33 @@ const server = new McpServer({
 // Tool to search for terms in files using baloosearch
 server.tool(
   "search_files",
-  "Search for terms in files using KDE baloosearch",
+  `Search for terms in files using KDE baloosearch.
+  
+Query Syntax Examples:
+- Simple search: "project plan"
+- Multiple terms: "budget AND marketing" (finds files with both terms)
+- OR search: "report OR presentation" (finds files with either term)
+- Phrase search: "\\"strategic plan\\"" (finds exact phrase)
+- Exclusion: "financial -tax" (finds files with "financial" but not "tax")
+- Wildcard: "report*" (finds files with words starting with "report")`,
   {
-    query: z.string().describe("The search query terms"),
+    query: z.string().describe(`The search query terms. Supports advanced search syntax:
+- AND: Requires both terms (e.g., "budget AND marketing")
+- OR: Requires either term (e.g., "report OR presentation")
+- NOT or -: Excludes terms (e.g., "financial -tax" or "financial NOT tax")
+- Phrase search: Use quotes for exact phrases (e.g., "\\"project plan\\"")
+- Wildcards: Use * for partial matching (e.g., "report*")
+- Grouping: Use parentheses to group terms (e.g., "(budget OR finance) AND 2024")`),
     limit: z.number().optional().describe("Maximum number of results to return (default: 10)"),
     offset: z.number().optional().describe("Offset from which to start the search (default: 0)"),
-    directory: z.string().optional().describe("Limit search to specified directory"),
-    type: z.string().optional().describe("Type of data to be searched")
+    directory: z.string().optional().describe("Limit search to specified directory (absolute path)"),
+    type: z.string().optional().describe(`Type of data to be searched. Common types include:
+- "Document" (text documents, PDFs, etc.)
+- "Audio" (audio files)
+- "Image" (image files)
+- "Video" (video files)
+- "Folder" (directories)
+- "Unknown" (files with unknown type)`)
   },
   async ({ query, limit, offset, directory, type }) => {
     try {
