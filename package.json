@@ -9,6 +9,7 @@
   },
   "scripts": {
     "start": "node src/server/mcp-server.js",
+    "inspector": "npx @modelcontextprotocol/inspector node src/server/mcp-server.js",
     "test-tool": "node src/test-tool.js",
     "test-server": "node src/test-server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
