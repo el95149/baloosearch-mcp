@@ -2,6 +2,10 @@
 
 A Model Context Protocol (MCP) server that provides file search functionality using KDE's baloosearch tool.
 
+<a href="https://glama.ai/mcp/servers/@el95149/baloosearch-mcp">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@el95149/baloosearch-mcp/badge" alt="Baloosearch Server MCP server" />
+</a>
+
 ## Description
 
 This MCP server exposes a tool that allows AI assistants to search for terms in files using the KDE baloosearch utility. It enables semantic search across your file system to find relevant documents and content.
